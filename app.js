@@ -1,9 +1,12 @@
-// //necessarry fs define line!
-// //"require" saves core module to fs that makes it a special object that has access to all the fs information from node.js
-const fs = require('fs');
+
+// //"require" saves core module to fs that makes it a special object that has access to all the file information 
+
+//destructured the object so that we dont have to use generate-site.writeFile or .copyFile
+const {writeFile, copyFile} = require('./utils/generate-site.js');
 
 // import inquirer package into our project
 const inquirer = require('inquirer');
+const { off } = require('process');
 
 //Require statement to import our page-template js
 const generatePage = require('./src/page-template');
@@ -194,20 +197,28 @@ const promptProject = portfolioData => {
         });
 };
 
-// //invoke our functions
-// promptUser()
-//    // .then(promptProject)
-//     .then(portfolioData => {
-//         console.log(portfolioData);
-        //SENDING MOCK DATA
-        const pageHTML = generatePage(mockData);
-        
-        fs.writeFile('./index.html', generatePage(mockData), err => {
-            if(err) throw new Error(err);
+//invoke our functions
+promptUser()
+   .then(promptProject)
+    .then(portfolioData => {
+        return generatePage(portfolioData);
+    })
+    .then(pageHTML => {
+        return writeFile(pageHTML);
+    })
+    .then(writeFileResponse => {
+        console.log(writeFileResponse);
+        return copyFile();
+    })
+    .then(copyFileResponse => {
+        console.log(copyFileResponse);
+
+    })
+    .catch(err => {
+        console.log(err);
+    });
        
-        });
-    // })
-;
+
 
 
 

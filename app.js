@@ -1,6 +1,62 @@
+// //necessarry fs define line!
+// //"require" saves core module to fs that makes it a special object that has access to all the fs information from node.js
+const fs = require('fs');
+
 // import inquirer package into our project
 const inquirer = require('inquirer');
 
+//Require statement to import our page-template js
+const generatePage = require('./src/page-template');
+
+// mock data to avoid testing retyping
+const mockData = {
+    name: 'Claire Cashmore',
+    github: 'clairecashmore17',
+    confirmAbout: true,
+    about:
+      'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
+    projects: [
+        {
+            name: 'Run Buddy',
+            description:
+              'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+            languages: ['HTML', 'CSS'],
+            link: 'https://github.com/lernantino/run-buddy',
+            feature: true,
+            confirmAddProject: true
+          },
+          {
+            name: 'Taskinator',
+            description:
+              'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+            languages: ['JavaScript', 'HTML', 'CSS'],
+            link: 'https://github.com/lernantino/taskinator',
+            feature: true,
+            confirmAddProject: true
+          },
+          {
+            name: 'Taskmaster Pro',
+            description:
+              'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+            languages: ['JavaScript', 'jQuery', 'CSS', 'HTML', 'Bootstrap'],
+            link: 'https://github.com/lernantino/taskmaster-pro',
+            feature: false,
+            confirmAddProject: true
+          },
+          {
+            name: 'Robot Gladiators',
+            description:
+              'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque.',
+            languages: ['JavaScript'],
+            link: 'https://github.com/lernantino/robot-gladiators',
+            feature: false,
+            confirmAddProject: false
+          }
+
+    ]
+}
+
+//COMMENTED PROMPTS OUT FOR MOCK DATA IN INVOKE
 // function to prompt the user for personal info
 const promptUser = () => {
     return inquirer.prompt([
@@ -21,7 +77,15 @@ const promptUser = () => {
         {
             type: 'input',
             name: 'github',
-            message: 'Enter your Github Username'
+            message: 'Enter your Github Username (Required)',
+            validate: githubInput => {
+                if (githubInput) {
+                  return true;
+                } else {
+                  console.log('Please enter your GitHub username!');
+                  return false;
+                }
+              }
         },
         {
             type: 'confirm',
@@ -122,7 +186,7 @@ const promptProject = portfolioData => {
     ])
         .then(projectData=> {
             portfolioData.projects.push(projectData);
-            if( projectData.confirmAddProject) {
+            if(projectData.confirmAddProject) {
                 return promptProject(portfolioData);
             } else { 
                 return portfolioData;
@@ -130,28 +194,25 @@ const promptProject = portfolioData => {
         });
 };
 
-//invoke our functions
-promptUser()
-    .then(promptProject)
-    .then(portfolioData => {
-        console.log(portfolioData);
-    })
+// //invoke our functions
+// promptUser()
+//    // .then(promptProject)
+//     .then(portfolioData => {
+//         console.log(portfolioData);
+        //SENDING MOCK DATA
+        const pageHTML = generatePage(mockData);
+        
+        fs.writeFile('./index.html', generatePage(mockData), err => {
+            if(err) throw new Error(err);
+       
+        });
+    // })
 ;
 
 
 
     
-// //necessarry fs define line!
-// //"require" saves core module to fs that makes it a special object that has access to all the fs information from node.js
-// const fs = require('fs');
-
-// //Require statement to import our page-template js
-// const generatePage = require('./src/page-template.js');
 
 
 
 
-// fs.writeFile('./index.html', generatePage(name,github), err => {
-//     if(err) throw new Error(err);
-//     console.log("Portfolio Complete! Checkout index.html to see the output!")
-// });
